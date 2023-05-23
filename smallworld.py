@@ -98,10 +98,10 @@ def printa(Grafo):
       if(Grafo[i][j] != -1):
         print('Conexões:', j, 'Distancia:', round(Grafo[i][j], 3))
 
-ListVert, Grafo = gera_rede_knn(10, 2)
+ListVert, Grafo = gera_rede_knn(30, 2)
 #printa(Grafo)
 #print('-------------------------------------------------------------------')
-reconecta_aresta(ListVert, Grafo, 0.1)
+reconecta_aresta(ListVert, Grafo, 0.5)
 #printa(Grafo)
 
 
@@ -236,13 +236,13 @@ def busca_prof_rec(o, d, grafo, visitado, dist, parada, color_map, number_pictur
   for i in range (len(grafo[o])):
     if i not in visitado and grafo[o][i] > 0:
       if parada == True:
-        return visitado, dist, parada
+        return visitado, dist, parada, number_pictures
       dist += grafo[o][i]
       if i == d:
         visitado.append(i)
         parada = True
-        return visitado, dist, parada 
-      visitado, dist, parada = busca_prof_rec(i, d, grafo, visitado, dist, parada, color_map, number_pictures)
+        return visitado, dist, parada, number_pictures
+      visitado, dist, parada, number_pictures = busca_prof_rec(i, d, grafo, visitado, dist, parada, color_map, number_pictures)
 
   return visitado, dist, parada, number_pictures
 
@@ -264,14 +264,13 @@ def busca_profundidade(o, d, grafo):
 
 o = 0
 d = 4
+print('erro aqui')
 cam, dist = busca_profundidade(o, d, Grafo)
 print(cam)
 print(round(dist, 2))
-
 """#Busca Best-First"""
 
-from queue import PriorityQueue
-
+'''
 v = 14
 graph = [[] for i in range(v)]
 
@@ -321,6 +320,64 @@ source = 0
 target = 9
 best_first_search(source, target, v)
 
+'''
+#---------------------------------------------------------------------------
+
+#busca largura 
+
+import time
+from queue import PriorityQueue
+
+def g(a):
+  return a.get()[1] 
+
+def busca_largura_heuristica(o, d, grafo):
+  fila = [o] # Fila dos vértices que serão analisados
+  visitado = [False] * len(grafo)
+  visitado[o] = True
+
+  pq = PriorityQueue()
+  pq.put((0, o))
+  
+  dist = 0
+  cam = []
+
+  color_map = ['blue'] * len(G1.nodes)
+
+  number_pictures = 0
+  while pq.empty() == False:
+    print('Fila de prioridade:', pq.queue)
+    a = pq.get()[1]
+    #a = fila.pop(0)
+    
+    cam.append(a)
+    atualiza_grafo(grafo, a, color_map, number_pictures, caseBestFirst)
+
+    if(a == d):
+      return cam, dist
+
+    for i in range (len(grafo[a])): # for para adicionar os filhos do grafo atual na fila
+      if visitado[i] == False and grafo[a][i] > 0: # caso nao esteja conectado, grafo[a][i] == -1, portanto precisa checar se é maior que 0
+        pq.put((grafo[a][i], i))
+        pq.sort(key = g)
+        visitado[i] = True
+        dist += grafo[a][i]
+        if i == d: # Se alcancar o destino, nao soma as  distancias dos filhos subsequentes
+          break
+
+    number_pictures = number_pictures + 1
+
+  return [], -1
+
+o = 0
+d = 4
+printa(Grafo)
+cam, dist = busca_largura_heuristica(o, d, Grafo)
+print(cam)
+print(round(dist, 2))
+
+
+
 """  #Algoritmo A*
 
 """
@@ -328,7 +385,7 @@ best_first_search(source, target, v)
 
 
 """# Visualização das buscas"""
-
+'''
 ListVert, Grafo = gera_rede_knn(10, 2)
 reconecta_aresta(ListVert, Grafo, 0.7)
 
@@ -361,10 +418,10 @@ print('Distancia percorrida: ', dist)
 #print('Caminho: ', cam)
 #print('Distancia percorrida: ', dist)
 
-
+'''
 
 """#Avaliação de Desempenho"""
-
+'''
 ListVert, Grafo = gera_rede_knn(2000, 7)
 reconecta_aresta(ListVert, Grafo, 0.1)
 
@@ -396,4 +453,6 @@ print('Distancia percorrida: ', dist)
 #print('Busca A* -----------')
 #print('Caminho: ', cam)
 #print('Distancia percorrida: ', dist)
+'''
+
 '''
