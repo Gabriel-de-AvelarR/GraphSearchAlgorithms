@@ -98,10 +98,10 @@ def printa(Grafo):
       if(Grafo[i][j] != -1):
         print('Conexões:', j, 'Distancia:', round(Grafo[i][j], 3))
 
-ListVert, Grafo = gera_rede_knn(30, 2)
+ListVert, Grafo = gera_rede_knn(100, 3)
 #printa(Grafo)
 #print('-------------------------------------------------------------------')
-reconecta_aresta(ListVert, Grafo, 0.5)
+reconecta_aresta(ListVert, Grafo, 0.1)
 #printa(Grafo)
 
 
@@ -207,16 +207,7 @@ def busca_largura(o, d, grafo):
           break
 
     number_pictures = number_pictures + 1
-  '''
-    for i in range(n):
-      if visitado[i] == False  and grafo[a][i] > 0:
-        fila.append(i)
-        visitado[i] = True
-        dist += grafo[a][i]
-        if i == d:
-          cam.append(i)
-          return cam, dist
-  '''
+
   return [], -1
 
 o = 0
@@ -264,66 +255,14 @@ def busca_profundidade(o, d, grafo):
 
 o = 0
 d = 4
-print('erro aqui')
+
 cam, dist = busca_profundidade(o, d, Grafo)
 print(cam)
 print(round(dist, 2))
+
+
+
 """#Busca Best-First"""
-
-'''
-v = 14
-graph = [[] for i in range(v)]
-
-def best_first_search(actual_Src, target, n):
-	visited = [False] * n
-	pq = PriorityQueue()
-	pq.put((0, actual_Src))
-	visited[actual_Src] = True
-	
-	while pq.empty() == False:
-		u = pq.get()[1]
-		# Displaying the path having lowest cost
-		print(u, end=" ")
-		if u == target:
-			break
-
-		for v, c in graph[u]:
-			if visited[v] == False:
-				visited[v] = True
-				pq.put((c, v))
-	print()
-
-# Function for adding edges to graph
-
-
-def addedge(x, y, cost):
-	graph[x].append((y, cost))
-	graph[y].append((x, cost))
-
-
-# integers addedge(x,y,cost);
-addedge(0, 1, 3)
-addedge(0, 2, 6)
-addedge(0, 3, 5)
-addedge(1, 4, 9)
-addedge(1, 5, 8)
-addedge(2, 6, 12)
-addedge(2, 7, 14)
-addedge(3, 8, 7)
-addedge(8, 9, 5)
-addedge(8, 10, 6)
-addedge(9, 11, 1)
-addedge(9, 12, 10)
-addedge(9, 13, 2)
-
-source = 0
-target = 9
-best_first_search(source, target, v)
-
-'''
-#---------------------------------------------------------------------------
-
-#busca largura 
 
 import time
 from queue import PriorityQueue
@@ -346,7 +285,7 @@ def busca_largura_heuristica(o, d, grafo):
 
   number_pictures = 0
   while pq.empty() == False:
-    print('Fila de prioridade:', pq.queue)
+    #print('Fila de prioridade:', pq.queue)
     a = pq.get()[1]
     #a = fila.pop(0)
     
@@ -359,7 +298,7 @@ def busca_largura_heuristica(o, d, grafo):
     for i in range (len(grafo[a])): # for para adicionar os filhos do grafo atual na fila
       if visitado[i] == False and grafo[a][i] > 0: # caso nao esteja conectado, grafo[a][i] == -1, portanto precisa checar se é maior que 0
         pq.put((grafo[a][i], i))
-        pq.sort(key = g)
+        #pq.sort(key = g)
         visitado[i] = True
         dist += grafo[a][i]
         if i == d: # Se alcancar o destino, nao soma as  distancias dos filhos subsequentes
@@ -371,24 +310,24 @@ def busca_largura_heuristica(o, d, grafo):
 
 o = 0
 d = 4
-printa(Grafo)
+#printa(Grafo)
 cam, dist = busca_largura_heuristica(o, d, Grafo)
-print(cam)
-print(round(dist, 2))
+#print(cam)
+#print(round(dist, 2))
 
 
 
-"""  #Algoritmo A*
-
-"""
+#Algoritmo A*
 
 
-
-"""# Visualização das buscas"""
+#busca A* 
+#busca A* 
 '''
-ListVert, Grafo = gera_rede_knn(10, 2)
-reconecta_aresta(ListVert, Grafo, 0.7)
-
+for i in range(len(Grafo)):
+  print('Vertice: ', i)
+  for j in range (len(Grafo[i])):
+    print('Conexao: ', j, 'Distancia: ', Grafo[i][j])
+'''
 G = VisualGrafo()
 for i in range(len(Grafo)):
     for j in range(i + 1):
@@ -397,62 +336,85 @@ for i in range(len(Grafo)):
 
 G1 = nx.Graph()
 G1.add_edges_from(G.aresta)
-pos = nx.spring_layout(G=G1, seed=42)
+print(G1.nodes)
+pos = nx.spring_layout(G=G1, seed=42, scale =2)
 
-o = 3
+##
+def atualiza_grafo_A(grafo, a, color_map, number_pictures):
+  lista_nodes = list(G1.nodes)
+  for i in range(len(lista_nodes)):
+    if lista_nodes[i] == a:
+      color_map[i] = 'red'
+  nx.draw_networkx(G1, pos=pos, node_color=color_map)  
+  filename = 'AlgoritmoA/A' + str(number_pictures) + '.png'
+  plt.savefig(filename)
+  plt.show()
+  #time.sleep(2)
+  plt.close()
+
+def ordena(a):
+  return a[0]
+
+def distancia_dois_pontos(o,d):
+   a = (ListVert[o][0]-ListVert[d][0])**2
+   b = (ListVert[o][1]-ListVert[d][1])**2
+   return math.sqrt(a+b)
+
+##
+def ciclo_de_busca_visualizacao(d, grafo, color_map, visitado, a, cam, dist, number_pictures):
+  cam.append(a)
+  som = []
+
+  atualiza_grafo(grafo, a, color_map, number_pictures, caseA)
+  number_pictures = number_pictures + 1
+
+  if(a == d):
+    return cam, dist, number_pictures
+
+  for i in range (len(grafo[a])): # for para adicionar os filhos do grafo atual na fila
+    if visitado[i] == False and grafo[a][i] > 0: # caso nao esteja conectado, grafo[a][i] == -1, portanto precisa checar se é maior que 0
+      som.append([grafo[a][i]+ distancia_dois_pontos(i,d), i, grafo[a][i]]) # +DISTTOT
+      visitado[i] = True
+      if i == d: # Se alcancar o destino, nao soma as  distancias dos filhos subsequentes
+        dist += grafo[a][i]
+        cam.append(i)
+        return cam, dist, number_pictures
+
+
+  som.sort(key=ordena)
+  if len(som) != 0:
+    som2, m, dist = som[0]
+    som.pop(0)
+    cam, dist, number_pictures = ciclo_de_busca_visualizacao(d, grafo, color_map, visitado, m, cam, dist, number_pictures)
+    visitado[m] = False
+    while dist == -1 and len(som) != 0:
+      som2, m, dist = som[0]
+      som.pop(0)
+      cam, dist, number_pictures = ciclo_de_busca_visualizacao(d, grafo, color_map, visitado, m, cam, dist, number_pictures)
+
+      visitado[m] = False
+    return cam,dist, number_pictures
+  else:
+    return [], -1, number_pictures
+def busca_A_visualizacao(o, d, grafo, number_pictures):
+  visitado = [False] * len(grafo)
+  visitado[o] = True
+  dist = 0
+  cam = []
+  
+  color_map = ['blue'] * len(G1.nodes)
+  
+  cam, dist, number_pictures = ciclo_de_busca_visualizacao(d, grafo, color_map,visitado,  o, cam, dist, number_pictures)
+  if dist!= -1:
+    atualiza_grafo(grafo,d, color_map, number_pictures, caseA)
+    number_pictures = number_pictures + 1
+  return cam, dist
+  
+
+o = 0
 d = 4
-cam, dist = busca_largura(o, d, Grafo)
-print('Busca em Largura ----------------')
-print('Caminho: ', cam)
-print('Distancia percorrida: ', dist)
-cam, dist = busca_profundidade(o, d, Grafo)
-print('Busca em Profundidade -----------')
-print('Caminho: ', cam)
-print('Distancia percorrida: ', dist)
-# Busca Best First
-# print('Busca Best First -----------')
-# print('Caminho: ', cam)
-# print('Distancia percorrida: ', dist)
-# Busca A*
-#print('Busca A* -----------')
-#print('Caminho: ', cam)
-#print('Distancia percorrida: ', dist)
-
-'''
-
-"""#Avaliação de Desempenho"""
-'''
-ListVert, Grafo = gera_rede_knn(2000, 7)
-reconecta_aresta(ListVert, Grafo, 0.1)
-
-pontos = [(int(random.random() * 100) % len(Grafo), int(random.random() * 100) % len(Grafo)) for i in range(10)]
-print(pontos)
-
-tempo_largura = 0
-for i in range (10):
-  o, d = pontos(i)
-  start = time.time()
-  busca_largura(o, d, Grafo)
-  end = time.time()
-  tempo_largura += (end - start) / 10
-print('Tempo busca largura: ', tempo_largura)
-'''
-cam, dist = busca_largura(o, d, Grafo)
-print('Busca em Largura ----------------')
-print('Caminho: ', cam)
-print('Distancia percorrida: ', dist)
-cam, dist = busca_profundidade(o, d, Grafo)
-print('Busca em Profundidade -----------')
-print('Caminho: ', cam)
-print('Distancia percorrida: ', dist)
-# Busca Best First
-# print('Busca Best First -----------')
-# print('Caminho: ', cam)
-# print('Distancia percorrida: ', dist)
-# Busca A*
-#print('Busca A* -----------')
-#print('Caminho: ', cam)
-#print('Distancia percorrida: ', dist)
-'''
-
-'''
+number_pictures = 0
+cam, dist = busca_A_visualizacao(o, d, Grafo, number_pictures)
+#printa(Grafo)
+print(cam)
+print(round(dist, 2))
